@@ -29,19 +29,19 @@ public:
         age = move(rrv.age);
         return *this;
     }
-    friend ostream& operator<<(ostream& os, const Client& obj)
+    friend ostream &operator<<(ostream &os, const Client &obj)
     {
         os << "Imie:" << obj.name << "wiek: " << obj.age << endl;
     }
-    void set_age(int a){
-        if(a > 0 && a < 200)
-            age = a;
+    void set_age(int a)
+    {
+        age = a;
     }
-    int get_age() const {return age;}
-    void set_name(const char * n)
+    int get_age() const { return age; }
+    void set_name(const char *n)
     {
         name.clear();
         name = n;
     }
-    string get_name() const {return name;}
+    string get_name() const { return name; }
 };
