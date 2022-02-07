@@ -7,10 +7,9 @@ using namespace std;
 class CommandCreate : public Command
 {
     Client &client;
-    MainState &return_state;
 
 public:
-    CommandCreate(Client &ref, MainState &main_state) : client{ref}, return_state{main_state}
+    CommandCreate(Client &refe) : client{refe}
     {
     }
     void call() override
@@ -31,6 +30,5 @@ public:
             cin.clear();
         }
         client.set_age(age);
-        return_state = MainState::Create;
     }
 };

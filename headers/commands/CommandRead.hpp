@@ -9,18 +9,17 @@ class CommandRead : public Command
 {
     Client &client;
     Database &database;
-    MainState &return_state;
 
 public:
-    CommandRead(Client &client_ref, Database &db_ref, MainState &main_state) : client{client_ref}, database{db_ref}, return_state{main_state}
+    CommandRead(Client &client_ref, Database &db_ref) : client{client_ref}, database{db_ref}
     {
     }
     void call() override
     {
-        CommandCreate(client, return_state);
+        CommandCreate tmp{client};
+        tmp.call();
         client = database.return_current_client(client);
         if (client.get_name() == "Empty")
             cout << "Nie ma takiego klienta w bazie danych.";
-        return_state = MainState::Read;
     }
 };

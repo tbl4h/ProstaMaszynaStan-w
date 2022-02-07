@@ -3,9 +3,9 @@
 #include "../Enums.hpp"
 class CommandExit : public Command 
 {
-    MainState& return_state;
+    
     public:
-    CommandExit(MainState& main_state):return_state{main_state}{
+    CommandExit(){
     }
     void call() override {
         exit(0);

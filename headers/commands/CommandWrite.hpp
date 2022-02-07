@@ -9,15 +9,13 @@ class CommandWrite : public Command
 {
     Client &client;
     Database &db;
-    MainState &return_state;
 
 public:
-    CommandWrite(Client &client_ref, Database &deb_ref, MainState &main_state) : client{client_ref}, db{deb_ref}, return_state{main_state}
+    CommandWrite(Client &client_ref, Database &deb_ref) : client{client_ref}, db{deb_ref}
     {
     }
     void call() override
     {
         db.add_to_db(client);
-        return_state = MainState::Write;
     }
 };

@@ -9,6 +9,8 @@
 #include "./commands/CommandRead.hpp"
 #include "./commands/CommandListMenu.hpp"
 #include "./commands/CommandExit.hpp"
+#include "./commands/CommandFactory.hpp"
+
 using namespace std;
 class Menu
 {
@@ -17,42 +19,61 @@ class Menu
     Client current_client;
     Database db;
     MainState current_state = MainState::ListMenu;
-    CommandListMenu clm{choice, current_state};
-    CommandCreate cc{current_client, current_state};
-    CommandRead cr{current_client,db,current_state};
-    CommandWrite cw{current_client, db, current_state};
-    CommandExit ce{current_state};
-    map<MainState, vector<pair<MainTrigger, reference_wrapper<Command>>>> rules;
+    MainState exit_state = MainState::Exit;
+    CommandFactory command_factory{current_client,db,current_state}; 
+    map<MainState, vector<pair<MainTrigger, MainState>>> rules;
     void init_rules()
     {
         rules[MainState::ListMenu] = {
-            {MainTrigger::ToMenu, clm},
-            {MainTrigger::ToCreate, cc},
-            {MainTrigger::ToRead, cr},
-            {MainTrigger::ToWrite, cw},
-            {MainTrigger::ToExit, ce}};
+            {MainTrigger::ToMenu, MainState::ListMenu},
+            {MainTrigger::ToCreate, MainState::Create},
+            {MainTrigger::ToRead, MainState::Read},
+            {MainTrigger::ToWrite, MainState::Write},
+            {MainTrigger::ToExit, MainState::Exit},
+            {MainTrigger::ToListDatabase, MainState::ListDatabase}};
         rules[MainState::Create] = {
-            {MainTrigger::ToMenu, clm}};
+            {MainTrigger::ToMenu, MainState::ListMenu}};
         rules[MainState::Read] = {
-            {MainTrigger::ToMenu, clm}};
+            {MainTrigger::ToMenu, MainState::ListMenu}};
         rules[MainState::Write] = {
-            {MainTrigger::ToMenu, clm}
-        };
+            {MainTrigger::ToMenu, MainState::ListMenu}};
+        rules[MainState::ListDatabase] = {
+            {MainTrigger::ToMenu, MainState::ListMenu}};
     }
 
 public:
     Menu() {}
     void make_choice()
     {
-        rules[MainState::ListMenu][0].second.get().call();
+        init_rules();
         while (true)
-        {            
-            cin >> choice;
-            if (cin.fail())
-                continue;
-            if (cin.bad())
-                throw runtime_error("Poważny błąd zapisu do danej.");
+        {
+            cout << "Telefon jest obecnie w stanie " << current_state << endl;
+        select_trigger:
+            cout << "Wybierz wyzwalacz:"
+                 << "\n";
 
+            int i = 0;
+            for (auto item : rules[current_state])
+            {
+                cout << i++ << ". " << item.first << "\n";
+            }
+
+            int input;
+            cin >> input;
+            if(cin.bad())
+                cin.clear();
+            if (input < 0 || (input + 1) > rules[current_state].size())
+            {
+                cout << "Niepoprawna opcja. Spr¢buj jeszcze raz."
+                     << "\n";
+                goto select_trigger;
+            }
+
+            current_state = rules[current_state][input].second;
+            command_factory.build(current_state);
+            if (current_state == exit_state)
+                break;
         }
     }
     int ret_choice() const { return choice; }
