@@ -28,6 +28,7 @@ public:
             if (cin.bad())
                 throw runtime_error("Nie można wczytać wiku.\n");
             cin.clear();
+            cin.ignore(256,'\n');
         }
         client.set_age(age);
     }

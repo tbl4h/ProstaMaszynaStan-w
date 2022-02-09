@@ -31,7 +31,7 @@ public:
     }
     friend ostream &operator<<(ostream &os, const Client &obj)
     {
-        os << "Imie:" << obj.name << "wiek: " << obj.age << endl;
+        os << "Imie: " << obj.name << " wiek: " << obj.age << endl;
     }
     void set_age(int a)
     {

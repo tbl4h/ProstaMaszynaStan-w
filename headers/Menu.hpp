@@ -48,7 +48,7 @@ public:
         init_rules();
         while (true)
         {
-            cout << "Telefon jest obecnie w stanie " << current_state << endl;
+            cout << "Jesteś obecnit w stanie " << current_state << endl;
         select_trigger:
             cout << "Wybierz wyzwalacz:"
                  << "\n";
@@ -61,8 +61,10 @@ public:
 
             int input;
             cin >> input;
-            if(cin.bad())
-                cin.clear();
+            if(cin.fail()){
+                cin.clear();                
+                cin.ignore(256,'\n');
+            }
             if (input < 0 || (input + 1) > rules[current_state].size())
             {
                 cout << "Niepoprawna opcja. Spr¢buj jeszcze raz."
